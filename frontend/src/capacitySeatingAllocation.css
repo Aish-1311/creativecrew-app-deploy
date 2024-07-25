@@ -1,0 +1,17 @@
+.capacityTableContainer{
+    border: 1px solid #cbc6c6;
+    font-family: sans-serif !important;
+}
+.capacityTableContainer th{
+    background: #e5ede5;
+    font-weight: 600;
+    font-size: 18px !important;
+}
+.capacityTableContainer th,.capacityTableContainer td{
+    font-family: sans-serif !important;
+    padding: 2% !important;
+}
+.capacityTableContainer td{
+    font-size: 16px !important;
+    text-transform: capitalize !important;
+}

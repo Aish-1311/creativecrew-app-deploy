@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.greenColor{
+  background-color: #027c43 !important;
+  }
+  
+  .fontFamily{
+    font-family:  sans-serif !important;
+  }
+  .fontBold{
+    font-weight: bold !important;
+  }
+  .headerLogo{
+    max-height: 3vw;
+    text-align: left !important;
+  }
+  .headerLogoSe{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .userIcon{
+    height: 2em !important;
+    width: 2em !important;
+  }
+  .primaryBtnColors{
+    background: #027c43 !important;
+    color: #fff !important;
+    min-width: 120px !important;
+  }
+  .secondaryBtnColors{
+    background: fff !important;
+    color: #027c43 !important;
+    min-width: 120px !important;
+    border: 1px solid #027c43 !important;
+  }
+  .seatAllocationClass{
+    padding: 30px;
+    margin: 0px 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  }
+  .legendsSeating{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
