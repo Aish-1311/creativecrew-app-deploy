@@ -3,17 +3,19 @@
     margin-top: 2%;
 }
 .seatAllocationContainer .seat{
-    height: 40px;
-    width: 80px;
-    background: gray;
-    border: 1px solid black;
-    /* display: inline-block; */
-    margin: 4px;
+    height: 38px;
+    width: 60px;
+    color:black ; 
+     border: 1px solid #999; 
+    /* display: inline-block;  */
+    margin: 5px;
     text-align: left;
-    border-radius: 4px; 
+    border-radius: 4px ; 
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+   
   };
 
   .seatAllocateMargin{
@@ -24,18 +26,22 @@
     border: 1px solid #ada7a7;
     padding: 2px;
     font-size: 1.2em;
-    margin-right: 10px;
+    margin-right: 10px; 
+    
 }
 .allocateContainer{
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
     border-radius: 8px;
     padding-bottom: 25px;
+    
 }
 .disabled-div {
   pointer-events: none; /* Disable pointer events */ 
   cursor: not-allowed; /* Optional: Change cursor to indicate not-allowed */
+
 }
 .seatAllocationContainer  .MuiInputBase-formControl {
   text-transform: capitalize !important;
   font-family: sans-serif !important;
+ 
 }

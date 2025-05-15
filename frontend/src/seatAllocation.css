@@ -5,11 +5,11 @@
 .seatAllocationContainer .seat{
     height: 20px;
     width: 20px;
-    background: gray;
+    background: black;
     border: 1px solid black;
     display: inline-block;
     margin: 10px;
-    text-align: left
+    text-align: left;
 };
 
   .seatAllocateMargin{
