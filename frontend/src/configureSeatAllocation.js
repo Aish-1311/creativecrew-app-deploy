@@ -429,7 +429,7 @@ const ConfigureSeatAllocation = () => {
           <Grid
             item
             md={3}
-            sx={{ maxWidth: 400, margin: "4%" }}
+            sx={{ maxWidth: 410, margin: "7%" }}
             className="allocateContainer"
           >
             <Box
@@ -704,7 +704,6 @@ const ConfigureSeatAllocation = () => {
                       </MenuItem>
                     ))}
 
-
                   </Select>
                 </>
                   :
@@ -818,7 +817,7 @@ const ConfigureSeatAllocation = () => {
             </Box>
           </Grid>
         ) : (
-          <Grid item md={7}>
+          <Grid item xs={11}>
             <Box
               sx={{
                 display: "flex",
@@ -832,21 +831,21 @@ const ConfigureSeatAllocation = () => {
                 <Button
                   className="primaryBtnColors"
                   onClick={handleAllocation}
-                  sx={{ textTransform: "capitalize", margin: "6px" }}
+                  sx={{ textTransform: "capitalize", margin: "5px" }}
                 >
                   Add new seating capacity
                 </Button>
                 <Button
                   className="primaryBtnColors"
                   onClick={handleSeatAllocation}
-                  sx={{ textTransform: "capitalize" }}
+                  sx={{ textTransform: "capitalize", margin: "5px" }}
                 >
                   Allocate seats
                 </Button>
               </Grid>
             </Box>
             <Box className="seatAllocationClass">
-              <TableContainer className="capacityTableContainer">
+              <TableContainer className="capacityTableContainer" sx={{ maxWidth: "100%" }}>
                 <Table aria-label="customized table">
                   <TableHead>
                     <TableRow>

@@ -176,7 +176,7 @@ export default function Employee() {
   };
 
   return (
-    <Container sx={{ mt: 4, px: isMobile ? 2 : 4 }}>
+    <Container xs={{ mt: 4, px: isMobile ? 1 : 5 }}>
       <Typography
         variant={isMobile ? "h5" : "h4"}
         sx={{ mb: 3, color: "#2c3e50", fontWeight: "bold", textAlign: "center" }}
@@ -186,11 +186,12 @@ export default function Employee() {
 
       {/* Seat Allocation Table */}
       <Box sx={{ overflowX: "auto", mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+          
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", textAlign: isMobile ? "center" : "left"  }}>
           Seat Allocation
         </Typography>
-        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px" }}>
-          <Table>
+        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px", minWidth: isMobile ? 600 : "auto" }}>
+          <Table size="small">
             <TableHead>
               <TableRow sx={{ backgroundColor: "#2980b9" }}>
                 {[
@@ -279,6 +280,7 @@ export default function Employee() {
           </Table>
         </TableContainer>
       </Box>
+
 
       {/* Booked Seats Table */}
       <Box sx={{ overflowX: "auto" }}>
