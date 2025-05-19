@@ -176,7 +176,7 @@ export default function Employee() {
   };
 
   return (
-    <Container xs={{ mt: 4, px: isMobile ? 1 : 5 }}>
+    <Container sx={{ mt: isMobile ? 7 : 10 }}>
       <Typography
         variant={isMobile ? "h5" : "h4"}
         sx={{ mb: 3, color: "#2c3e50", fontWeight: "bold", textAlign: "center" }}
@@ -185,13 +185,13 @@ export default function Employee() {
       </Typography>
 
       {/* Seat Allocation Table */}
-      <Box sx={{ overflowX: "auto", mb: 4 }}>
+      <Box sx={{ overflowX: "auto", mb: 4, width: "100%" }}>
           
         <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", textAlign: isMobile ? "center" : "left"  }}>
           Seat Allocation
         </Typography>
-        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px", minWidth: isMobile ? 600 : "auto" }}>
-          <Table size="small">
+        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px", width: "100%", minWidth: 0 }}>
+          <Table sx={{ minWidth: "700px" }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#2980b9" }}>
                 {[
@@ -281,14 +281,13 @@ export default function Employee() {
         </TableContainer>
       </Box>
 
-
       {/* Booked Seats Table */}
-      <Box sx={{ overflowX: "auto" }}>
+      <Box sx={{ overflowX: "auto", mb:4, width: "100%" }}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
           Your Booked Seats
         </Typography>
-        <TableContainer component={Paper} elevation={4} sx={{ borderRadius: 2 }}>
-          <Table>
+        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px", minWidth: 0, width: "100%" }}>
+          <Table sx={{ minWidth: "700px" }}>
             <TableHead sx={{ backgroundColor: "#2c3e50" }}>
               <TableRow>
                 {["Day", "Seat Number", "Campus", "Floor", "City", "Cancel"].map((header) => (

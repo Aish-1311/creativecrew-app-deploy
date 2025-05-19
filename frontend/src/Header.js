@@ -89,13 +89,13 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar color="success" position="static">
-        <Toolbar>
+        <Toolbar sx={{flexWrap: "wrap", gap:1}}>
           {!hideHeaderOptions && token &&
             <IconButton color="inherit" onClick={handleHome}>
               <HomeRoundedIcon />
             </IconButton>
           }
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h7" component="div" sx={{ flexGrow: 1 }}>
             Creative Crew
           </Typography>
           {!hideHeaderOptions && (
