@@ -637,9 +637,9 @@ const Hoe = () => {
       </Box>
 
       {/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
-      <Typography variant="h6" >Seats Layout</Typography>
+      <Typography variant="h5" >Seats Layout</Typography><br></br>
 
-      <Box display="flex" flexDirection="row" gap={2}>
+      <Box display="flex" flexDirection="row" justifyContent='center' flexWrap='wrap' alignItems='center' rowGap={2} columnGap={1.5}>
         <Box p={1} border={1} borderRadius={4}>
           <Typography variant="body2">Country: {HOE.country}</Typography>
         </Box>
