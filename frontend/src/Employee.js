@@ -1,3 +1,4 @@
+// import statements (same as before)
 import React, { useContext, useEffect, useState } from "react";
 import {
   Container,
@@ -23,12 +24,12 @@ import { jwtDecode } from "jwt-decode";
 export default function Employee() {
   const [seatData, setSeatData] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]);
-  const [noShowSeats, setNoShowSeats] = useState(new Set());
+  const [actionedSeats, setActionedSeats] = useState(new Set());
   const { token } = useContext(AuthContext);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const decoded = jwtDecode(token);
 
-  // Fetch seat allocation and pre-fill employee_selected_seats
+  // Fetch seat data
   useEffect(() => {
     const fetchSeatData = async () => {
       try {
@@ -65,7 +66,10 @@ export default function Employee() {
                   });
                 } catch (error) {
                   if (error.response?.status !== 409) {
-                    console.error(`Failed to book seat ${seatNumber} on ${day}:`, error.message);
+                    console.error(
+                      `Failed to book seat ${seatNumber} on ${day}:`,
+                      error.message
+                    );
                   }
                 }
               }
@@ -73,25 +77,26 @@ export default function Employee() {
           }
         }
       } catch (error) {
-        console.error("Error fetching seat data:", error.response?.data || error.message);
+        console.error(
+          "Error fetching seat data:",
+          error.response?.data || error.message
+        );
       }
     };
 
     const today = new Date().getDay();
     if (today === 0) {
-      localStorage.removeItem("noShowSeats");
-      setNoShowSeats(new Set());
+      localStorage.removeItem("seatActions");
+      setActionedSeats(new Set());
     } else {
-      const storedNoShowData = JSON.parse(localStorage.getItem("noShowSeats")) || {};
-      setNoShowSeats(new Set(Object.keys(storedNoShowData)));
+      const stored = JSON.parse(localStorage.getItem("seatActions")) || {};
+      setActionedSeats(new Set(Object.keys(stored)));
     }
 
-    if (token) {
-      fetchSeatData();
-    }
+    if (token) fetchSeatData();
   }, [token]);
 
-  // Fetch booked seats from employee_selected_seats
+  // Fetch booked seats
   useEffect(() => {
     const fetchBookedSeats = async () => {
       try {
@@ -110,46 +115,63 @@ export default function Employee() {
     if (token) fetchBookedSeats();
   }, [token]);
 
-  // Handle No Show
-  const handleNoShow = async (seat, day) => {
+  const handleAction = async (seat, day, action) => {
     const seatKey = `${seat.seat_data[0][day]}-${day}`;
-    if (noShowSeats.has(seatKey)) return;
+    if (actionedSeats.has(seatKey)) return;
 
-    const isConfirmed = window.confirm(
-      "Are you sure you want to cancel this seat for this week? It will reopen after Sunday."
-    );
-
+    const confirmMsg =
+      action === "NoShow"
+        ? "Are you sure you want to mark No Show for this day?"
+        : "Confirm you are occupying the seat this day?";
+    const isConfirmed = window.confirm(confirmMsg);
     if (!isConfirmed) return;
 
     try {
-      await axios.post(`${baseurl}/markNoShow`, {
-        firstName: decoded.firstName,
-        lastName: decoded.lastName,
-        seatNumber: seat.seat_data[0][day],
-        country: seat.country,
-        state: seat.state,
-        city: seat.city,
-        campus: seat.campus,
-        floor: seat.floor,
-        day,
-      });
+      if (action === "NoShow") {
+        await axios.post(`${baseurl}/markNoShow`, {
+          firstName: decoded.firstName,
+          lastName: decoded.lastName,
+          seatNumber: seat.seat_data[0][day],
+          country: seat.country,
+          state: seat.state,
+          city: seat.city,
+          campus: seat.campus,
+          floor: seat.floor,
+          day,
+        });
+      } else {
+        await axios.post(`${baseurl}/confirmOccupySeat`, {
+          firstName: decoded.firstName,
+          lastName: decoded.lastName,
+          seatNumber: seat.seat_data[0][day],
+          country: seat.country,
+          state: seat.state,
+          city: seat.city,
+          campus: seat.campus,
+          floor: seat.floor,
+          day,
+        });
+      }
 
-      const updatedNoShowSeats = new Set(noShowSeats);
-      updatedNoShowSeats.add(seatKey);
-      setNoShowSeats(updatedNoShowSeats);
+      const updated = new Set(actionedSeats);
+      updated.add(seatKey);
+      setActionedSeats(updated);
 
-      const storedNoShowData = JSON.parse(localStorage.getItem("noShowSeats")) || {};
-      storedNoShowData[seatKey] = new Date().toISOString();
-      localStorage.setItem("noShowSeats", JSON.stringify(storedNoShowData));
+      const stored = JSON.parse(localStorage.getItem("seatActions")) || {};
+      stored[seatKey] = new Date().toISOString();
+      localStorage.setItem("seatActions", JSON.stringify(stored));
 
-      alert(`Marked as No Show for ${day}`);
+      alert(
+        action === "NoShow"
+          ? `Marked as No Show for ${day}`
+          : `Confirmed Occupy for ${day}`
+      );
     } catch (error) {
-      console.error("Error marking No Show:", error);
-      alert("Failed to mark No Show");
+      console.error(`Error during ${action}:`, error);
+      alert(`Failed to perform action: ${action}`);
     }
   };
 
-  // Cancel selected seat
   const cancelSeat = async (seat) => {
     const isConfirmed = window.confirm(
       `Are you sure you want to cancel your seat for ${seat.day}?`
@@ -166,7 +188,9 @@ export default function Employee() {
       });
 
       setBookedSeats((prev) =>
-        prev.filter((s) => !(s.day === seat.day && s.seat_number === seat.seat_number))
+        prev.filter(
+          (s) => !(s.day === seat.day && s.seat_number === seat.seat_number)
+        )
       );
       alert("Seat cancelled successfully.");
     } catch (error) {
@@ -179,17 +203,25 @@ export default function Employee() {
     <Container sx={{ mt: 4, px: isMobile ? 2 : 4 }}>
       <Typography
         variant={isMobile ? "h5" : "h4"}
-        sx={{ mb: 3, color: "#2c3e50", fontWeight: "bold", textAlign: "center" }}
+        sx={{
+          mb: 3,
+          color: "#2c3e50",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
       >
         Welcome, {decoded.firstName} {decoded.lastName}!
       </Typography>
 
-      {/* Seat Allocation Table */}
       <Box sx={{ overflowX: "auto", mb: 4 }}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
           Seat Allocation
         </Typography>
-        <TableContainer component={Paper} elevation={5} sx={{ borderRadius: "12px" }}>
+        <TableContainer
+          component={Paper}
+          elevation={5}
+          sx={{ borderRadius: 3 }}
+        >
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: "#2980b9" }}>
@@ -216,8 +248,15 @@ export default function Employee() {
             <TableBody>
               {seatData.length > 0 ? (
                 seatData.map((seat, index) => (
-                  <TableRow key={index} sx={{ "&:nth-of-type(odd)": { backgroundColor: "#ecf0f1" } }}>
-                    <TableCell align="center">{seat.first_name} {seat.last_name}</TableCell>
+                  <TableRow
+                    key={index}
+                    sx={{
+                      "&:nth-of-type(odd)": { backgroundColor: "#ecf0f1" },
+                    }}
+                  >
+                    <TableCell align="center">
+                      {seat.first_name} {seat.last_name}
+                    </TableCell>
                     <TableCell align="center">{seat.country}</TableCell>
                     <TableCell align="center">{seat.state}</TableCell>
                     <TableCell align="center">{seat.city}</TableCell>
@@ -225,10 +264,26 @@ export default function Employee() {
                     <TableCell align="center">{seat.business_unit}</TableCell>
                     <TableCell align="center">{seat.campus}</TableCell>
                     <TableCell align="center">
-                      {Array.isArray(seat.seat_data) && seat.seat_data.length > 0 ? (
-                        <List sx={{ p: 1, backgroundColor: "#dff9fb", borderRadius: "8px", display: "inline-block", textAlign: "left" }}>
-                          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
-                            const seatKey = `${seat.seat_data[0][day]}-${day}`;
+                      {Array.isArray(seat.seat_data) &&
+                      seat.seat_data.length > 0 ? (
+                        <List
+                          sx={{
+                            p: 1,
+                            backgroundColor: "#dff9fb",
+                            borderRadius: "8px",
+                            display: "inline-block",
+                            textAlign: "left",
+                          }}
+                        >
+                          {[
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                          ].map((day) => {
+                            const seatVal = seat.seat_data[0][day];
+                            const seatKey = `${seatVal}-${day}`;
                             return (
                               <ListItem
                                 key={day}
@@ -236,32 +291,53 @@ export default function Employee() {
                                   p: "4px",
                                   fontSize: "0.9rem",
                                   fontWeight: "bold",
-                                  color: seat.seat_data[0][day] === "WFH" ? "#e74c3c" : "#27ae60",
-                                  backgroundColor: seat.seat_data[0][day] === "WFH" ? "#fdecea" : "#eafaf1",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "start",
+                                  color:
+                                    seatVal === "WFH" ? "#e74c3c" : "#27ae60",
+                                  backgroundColor:
+                                    seatVal === "WFH" ? "#fdecea" : "#eafaf1",
                                   borderRadius: "6px",
-                                  mb: "4px",
+                                  mb: "6px",
                                 }}
                               >
-                                {day}: {seat.seat_data[0][day] || "No data"}
-                                {seat.seat_data[0][day] !== "WFH" &&
-                                  seat.seat_data[0][day] !== "No data" && (
+                                {day}: {seatVal || "No data"}
+                                {seatVal !== "WFH" && seatVal !== "No data" && (
+                                  <Box sx={{ mt: 1, display: "flex", gap: 1 }}>
                                     <Button
                                       variant="contained"
                                       color="error"
                                       size="small"
-                                      sx={{ ml: 1 }}
-                                      onClick={() => handleNoShow(seat, day)}
-                                      disabled={noShowSeats.has(seatKey)}
+                                      onClick={() =>
+                                        handleAction(seat, day, "NoShow")
+                                      }
+                                      disabled={actionedSeats.has(seatKey)}
                                     >
-                                      {noShowSeats.has(seatKey) ? "No Showed" : "No Show"}
+                                      No Show
                                     </Button>
-                                  )}
+                                    <Button
+                                      variant="contained"
+                                      color="success"
+                                      size="small"
+                                      onClick={() =>
+                                        handleAction(seat, day, "Occupy")
+                                      }
+                                      disabled={actionedSeats.has(seatKey)}
+                                    >
+                                      Occupy
+                                    </Button>
+                                  </Box>
+                                )}
                               </ListItem>
                             );
                           })}
                         </List>
                       ) : (
-                        <Typography variant="body2" sx={{ color: "#e74c3c", fontWeight: "bold" }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "#e74c3c", fontWeight: "bold" }}
+                        >
                           No data available
                         </Typography>
                       )}
@@ -270,7 +346,11 @@ export default function Employee() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ color: "#e74c3c", fontWeight: "bold" }}>
+                  <TableCell
+                    colSpan={8}
+                    align="center"
+                    sx={{ color: "#e74c3c", fontWeight: "bold" }}
+                  >
                     No data available
                   </TableCell>
                 </TableRow>
@@ -280,17 +360,32 @@ export default function Employee() {
         </TableContainer>
       </Box>
 
-      {/* Booked Seats Table */}
+      {/* Booked Seats */}
       <Box sx={{ overflowX: "auto" }}>
         <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
           Your Booked Seats
         </Typography>
-        <TableContainer component={Paper} elevation={4} sx={{ borderRadius: 2 }}>
+        <TableContainer
+          component={Paper}
+          elevation={4}
+          sx={{ borderRadius: 2 }}
+        >
           <Table>
             <TableHead sx={{ backgroundColor: "#2c3e50" }}>
               <TableRow>
-                {["Day", "Seat Number", "Campus", "Floor", "City", "Cancel"].map((header) => (
-                  <TableCell key={header} align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                {[
+                  "Day",
+                  "Seat Number",
+                  "Campus",
+                  "Floor",
+                  "City",
+                  "Cancel",
+                ].map((header) => (
+                  <TableCell
+                    key={header}
+                    align="center"
+                    sx={{ color: "#fff", fontWeight: "bold" }}
+                  >
                     {header}
                   </TableCell>
                 ))}
@@ -319,7 +414,11 @@ export default function Employee() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ color: "#e74c3c" }}>
+                  <TableCell
+                    colSpan={6}
+                    align="center"
+                    sx={{ color: "#e74c3c" }}
+                  >
                     No seats booked.
                   </TableCell>
                 </TableRow>

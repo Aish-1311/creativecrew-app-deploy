@@ -2,7 +2,7 @@ module.exports = {
   host: "localhost",
   user: "postgres",
   password: "12345678",
-  database: "NewSeatingAllocationDB",
+  database: "newDB_13_may",
   port: 5432,
 };
 // // db.config.js
@@ -14,6 +14,5 @@ module.exports = {
 //  port: 5432,
 // };
 // db.config.js
-
 
 // db.config.js
