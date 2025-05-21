@@ -1227,10 +1227,26 @@ exports.markNoShow = async (req, res) => {
       floor,
       day
     );
-    res.status(200).json({ message: "No Show marked successfully" });
+    await models.logSeatAction({
+      ...req.body,
+      action: "NoShow",
+    });
+    res.status(200).json({ message: "Marked as No Show and logged." });
   } catch (error) {
     console.error("Error marking No Show:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.confirmOccupySeat = async (req, res) => {
+  try {
+    await models.logSeatAction({
+      ...req.body,
+      action: "Occupy",
+    });
+    res.status(200).json({ message: "Occupy confirmed and logged." });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

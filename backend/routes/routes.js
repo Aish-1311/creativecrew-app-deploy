@@ -132,6 +132,7 @@ router.get("/getSelectedSeats", controller.getSelectedSeats);
 router.delete("/cancelSeat", controller.cancelSeat);
 
 router.post("/markNoShow", controller.markNoShow);
+router.post("/confirmOccupySeat", controller.confirmOccupySeat);
 
 router.get("/getFilteredNoShows", controller.getFilteredNoShows);
 
